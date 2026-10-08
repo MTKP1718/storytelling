@@ -3,6 +3,7 @@ import { Sparkles, BookOpen, Star, Compass, Wand2, Shield, ArrowRight } from 'lu
 import type { AvatarId, ChildProfile, ScreenState } from '../types';
 import { AVATAR_OPTIONS } from '../data/mockStories';
 import { sound } from '../utils/audio';
+import { sanitizeChildName } from '../utils/security';
 import { AnimatedCharacter } from './AnimatedCharacter';
 import { ShootingStars } from './ShootingStars';
 import { StoryCard } from './StoryCard';
@@ -62,7 +63,7 @@ export const HeroLandingScreen: React.FC<HeroLandingScreenProps> = ({
     sound.playStarChime(1.2);
     setIsOpeningBook(true);
 
-    const trimmedName = nameInput.trim() || 'Young Explorer';
+    const trimmedName = sanitizeChildName(nameInput, 25) || 'Young Explorer';
     onUpdateProfile({
       name: trimmedName,
       avatar: selectedAvatar,

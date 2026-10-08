@@ -14,6 +14,7 @@ import {
 import type { ChildProfile, CompletedStoryRecord, Story } from '../types';
 import { MOCK_STORIES } from '../data/mockStories';
 import { sound } from '../utils/audio';
+import { sanitizePinInput, sanitizeNumericInput } from '../utils/security';
 
 interface ParentDashboardProps {
   childProfile: ChildProfile;
@@ -44,7 +45,9 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
 
   const handleVerifyGate = (e: React.FormEvent) => {
     e.preventDefault();
-    if (pinInput.trim() === defaultPin || parseInt(mathAnswer.trim(), 10) === correctMath) {
+    const cleanPin = sanitizePinInput(pinInput, 6);
+    const cleanMath = sanitizeNumericInput(mathAnswer, 0, 9999);
+    if (cleanPin === defaultPin || parseInt(cleanMath, 10) === correctMath) {
       sound.playCorrectSparkle();
       setIsUnlocked(true);
       setGateError('');
@@ -143,8 +146,9 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
                   <input
                     type="number"
                     value={mathAnswer}
-                    onChange={(e) => setMathAnswer(e.target.value)}
+                    onChange={(e) => setMathAnswer(e.target.value.slice(0, 4))}
                     placeholder="Answer"
+                    maxLength={4}
                     className="flex-1 px-3 py-2 rounded-xl bg-[#151930] border border-[#333C6B] text-sm text-[#FFFDF7] focus:border-[#FFD166] outline-none font-bold"
                   />
                 </div>

@@ -21,6 +21,7 @@ import type { ChildProfile, Story, WorldThemeId, ScreenState } from '../types';
 import { MOCK_STORIES } from '../data/mockStories';
 import { generateStoryWithAI } from '../utils/aiStoryGenerator';
 import { sound } from '../utils/audio';
+import { sanitizeTopic } from '../utils/security';
 import { StoryCard } from './StoryCard';
 import { AnimatedCharacter } from './AnimatedCharacter';
 
@@ -144,7 +145,8 @@ export const StoryConfigScreen: React.FC<StoryConfigScreenProps> = ({
   const [isWeaving, setIsWeaving] = useState(false);
   const [weavingStep, setWeavingStep] = useState('');
 
-  const activeTopic = customTopicInput.trim() || selectedTopic;
+  const sanitizedCustomTopic = sanitizeTopic(customTopicInput, 80);
+  const activeTopic = sanitizedCustomTopic || selectedTopic;
   const currentThemeObj = THEMES.find((t) => t.id === selectedTheme) || THEMES[0];
 
   const handleStartStory = async () => {
@@ -162,7 +164,7 @@ export const StoryConfigScreen: React.FC<StoryConfigScreenProps> = ({
         (m.id === 'water-cycle' && activeTopic.includes('Water'))
     );
 
-    if (matchingMock && !apiKey.trim() && !customTopicInput.trim()) {
+    if (matchingMock && !apiKey.trim() && !sanitizedCustomTopic) {
       setTimeout(() => {
         setWeavingStep('Illuminating the pages with golden ink...');
       }, 500);
@@ -194,8 +196,8 @@ export const StoryConfigScreen: React.FC<StoryConfigScreenProps> = ({
       sound.playPageFlip();
       onSelectStory(generated);
       onNavigate('reader');
-    } catch (err) {
-      console.error(err);
+    } catch {
+      console.warn('Story generation encountered an issue; safely falling back to curated story.');
       setIsWeaving(false);
       // Fallback to default
       onSelectStory(MOCK_STORIES[0]);
@@ -333,6 +335,7 @@ export const StoryConfigScreen: React.FC<StoryConfigScreenProps> = ({
             value={customTopicInput}
             onChange={(e) => setCustomTopicInput(e.target.value)}
             placeholder="e.g. Volcanoes, Long Division, Ancient Egypt, Roman Aqueducts, Mitosis..."
+            maxLength={80}
             className="flex-1 w-full min-h-[52px] sm:min-h-[56px] px-5 py-3.5 rounded-xl bg-[#151933] border-2 border-[#333C6B] focus:border-amber-400 text-base text-white font-medium placeholder:text-white/40 outline-none transition-all shadow-md"
           />
         </div>
@@ -421,6 +424,7 @@ export const StoryConfigScreen: React.FC<StoryConfigScreenProps> = ({
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
                 placeholder="Enter Gemini API Key (e.g., AIzaSy...)"
+                maxLength={120}
                 className="w-full min-h-[48px] px-4 py-3 rounded-xl bg-[#151933] border-2 border-[#333C6B] text-sm text-white font-semibold outline-none focus:border-amber-400 transition-all"
               />
             </div>

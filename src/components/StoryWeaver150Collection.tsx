@@ -32,6 +32,7 @@ import { EditorSpotlightCarousel } from './EditorSpotlightCarousel';
 import { QuickPreviewModal } from './QuickPreviewModal';
 import { QuickShareModal } from './QuickShareModal';
 import { sound } from '../utils/audio';
+import { sanitizeSearchQuery } from '../utils/security';
 
 interface StoryWeaver150CollectionProps {
   onSelectBookToRead: (book: StoryWeaverBook) => void;
@@ -74,13 +75,13 @@ export const StoryWeaver150Collection: React.FC<StoryWeaver150CollectionProps> =
   const filteredBooks = useMemo(() => {
     return CURATED_150_BOOKS.filter((book) => {
       // Search query
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase();
-        const matchesTitle = book.title.toLowerCase().includes(query);
-        const matchesAuthor = book.author.toLowerCase().includes(query);
-        const matchesIllustrator = book.illustrator.toLowerCase().includes(query);
-        const matchesSynopsis = book.synopsis.toLowerCase().includes(query);
-        const matchesCategory = book.categories.some((c) => c.toLowerCase().includes(query));
+      const cleanQuery = sanitizeSearchQuery(searchQuery, 60).toLowerCase();
+      if (cleanQuery) {
+        const matchesTitle = book.title.toLowerCase().includes(cleanQuery);
+        const matchesAuthor = book.author.toLowerCase().includes(cleanQuery);
+        const matchesIllustrator = book.illustrator.toLowerCase().includes(cleanQuery);
+        const matchesSynopsis = book.synopsis.toLowerCase().includes(cleanQuery);
+        const matchesCategory = book.categories.some((c) => c.toLowerCase().includes(cleanQuery));
         if (!matchesTitle && !matchesAuthor && !matchesIllustrator && !matchesSynopsis && !matchesCategory) {
           return false;
         }
@@ -221,6 +222,7 @@ export const StoryWeaver150Collection: React.FC<StoryWeaver150CollectionProps> =
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by title, author, topic (e.g. 'coconut', 'monsoon', 'dance')..."
+                maxLength={60}
                 className="w-full min-h-[52px] pl-12 pr-12 rounded-2xl bg-[#0D1020]/90 border-2 border-amber-400/40 focus:border-amber-400 text-white font-medium text-sm sm:text-base placeholder:text-white/40 shadow-xl outline-none transition-all"
               />
               {searchQuery && (

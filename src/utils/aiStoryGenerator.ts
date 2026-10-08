@@ -1,4 +1,5 @@
 import type { Story, WorldThemeId, AgeGroup } from '../types';
+import { sanitizeTopic, sanitizeChildName } from './security';
 
 export interface GenerateStoryParams {
   topic: string;
@@ -14,11 +15,21 @@ export interface GenerateStoryParams {
 export async function generateStoryWithAI(params: GenerateStoryParams): Promise<Story> {
   const { topic, theme, age, childName, apiKey } = params;
 
-  // If user provided a Gemini API key, attempt structured JSON generation
-  if (apiKey && apiKey.trim().length > 10) {
+  // Sanitize user-provided strings to prevent injection or payload tampering
+  const cleanTopic = sanitizeTopic(topic) || 'The Magic of Discovery';
+  const cleanChildName = sanitizeChildName(childName) || 'Young Hero';
+
+  // Resolve API key from explicitly passed parameter or environment variable
+  const envApiKey = typeof import.meta !== 'undefined' && import.meta.env?.VITE_GEMINI_API_KEY
+    ? String(import.meta.env.VITE_GEMINI_API_KEY)
+    : undefined;
+  const effectiveApiKey = (apiKey?.trim() || envApiKey?.trim() || '');
+
+  // If a valid Gemini API key is available, attempt structured JSON generation
+  if (effectiveApiKey && effectiveApiKey.length > 10) {
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey.trim()}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(effectiveApiKey)}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -28,15 +39,15 @@ export async function generateStoryWithAI(params: GenerateStoryParams): Promise<
                 parts: [
                   {
                     text: `You are Story Teacher, a world-class children's author and pedagogical expert.
-Generate an enchanting fairy tale about the school concept: "${topic}".
-Child Name: "${childName}".
+Generate an enchanting fairy tale about the school concept: "${cleanTopic}".
+Child Name: "${cleanChildName}".
 Target Age Group: "${age}".
 World Theme: "${theme}".
 
 Return ONLY a valid JSON object (no markdown, no backticks, just raw JSON) following this EXACT schema:
 {
   "id": "custom-${Date.now()}",
-  "topic": "${topic}",
+  "topic": "${cleanTopic}",
   "title": "A magical storybook title",
   "theme": "${theme}",
   "targetAge": "${age}",
@@ -159,13 +170,13 @@ Return ONLY a valid JSON object (no markdown, no backticks, just raw JSON) follo
           return parsed as Story;
         }
       }
-    } catch (err) {
-      console.warn('Gemini API call failed or timed out, falling back to procedural story weaver:', err);
+    } catch {
+      console.warn('AI story generation service temporarily unavailable; safely falling back to procedural story weaver.');
     }
   }
 
   // Fallback: Smart Procedural Story Weaver
-  return synthesizeProceduralStory(topic, theme, age, childName);
+  return synthesizeProceduralStory(cleanTopic, theme, age, cleanChildName);
 }
 
 /**
