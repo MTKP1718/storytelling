@@ -1,0 +1,420 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --navy-midnight: #101426;
+    --navy-deep: #1B1F38;
+    --navy-card: #23294C;
+    --navy-border: #333C6B;
+    --magic-violet: #5B42F3;
+    --magic-violet-light: #7E69FF;
+    --starlight-gold: #FFD166;
+    --starlight-gold-hover: #FFE08A;
+    --forest-green: #2EC4B6;
+    --forest-green-dark: #1F8E84;
+    --amber-peach: #FF9F68;
+    --parchment: #FFFDF7;
+    --parchment-warm: #FBF6E9;
+    --parchment-dark: #F3E7CE;
+  }
+
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: 'Nunito', 'Quicksand', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--navy-midnight);
+    color: var(--parchment);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, .font-storybook {
+    font-family: 'Cinzel', 'Playfair Display', serif;
+  }
+}
+
+/* Perfect Card Centering Container */
+.card-center-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: calc(100vh - 5rem);
+}
+
+/* Ensure sticker avatars and illustrations retain aspect ratio without squishing */
+.avatar-sticker-container {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* iOS Safe Areas */
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pl-safe {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+.pr-safe {
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* Keyframes for living magical atmosphere */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1.5deg);
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  33% {
+    transform: translateY(-12px) translateX(6px);
+  }
+  66% {
+    transform: translateY(-6px) translateX(-6px);
+  }
+}
+
+@keyframes firefly {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translate(0, 0) scale(0.8);
+  }
+  50% {
+    opacity: 0.95;
+    transform: translate(14px, -18px) scale(1.2);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 209, 102, 0.25), 0 0 40px rgba(91, 66, 243, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(255, 209, 102, 0.5), 0 0 60px rgba(91, 66, 243, 0.4);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes book-unfold {
+  0% {
+    transform: perspective(1000px) rotateY(25deg) scale(0.96);
+    opacity: 0.8;
+  }
+  100% {
+    transform: perspective(1000px) rotateY(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes gentle-blink {
+  0%, 90%, 100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+.animate-firefly-1 {
+  animation: firefly 5s ease-in-out infinite;
+}
+
+.animate-firefly-2 {
+  animation: firefly 7s ease-in-out infinite 2s;
+}
+
+.animate-firefly-3 {
+  animation: firefly 6s ease-in-out infinite 3.5s;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-character-blink {
+  transform-origin: center;
+  animation: gentle-blink 4s infinite;
+}
+
+/* Character Interactive Actions */
+@keyframes avatarWave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-18deg); }
+  75% { transform: rotate(18deg); }
+}
+
+@keyframes speechBubblePop {
+  0% { transform: scale(0) translateY(10px); opacity: 0; }
+  70% { transform: scale(1.08) translateY(-2px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes spinTurnaround {
+  0% { transform: perspective(800px) rotateY(0deg) scale(1); }
+  50% { transform: perspective(800px) rotateY(180deg) scale(1.08); }
+  100% { transform: perspective(800px) rotateY(360deg) scale(1); }
+}
+
+@keyframes streakPass {
+  0% {
+    transform: translateX(0) scaleX(0);
+    opacity: 0;
+  }
+  15% {
+    transform: translateX(40px) scaleX(1);
+    opacity: 1;
+  }
+  65% {
+    transform: translateX(260px) scaleX(1.3);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(480px) scaleX(0.1);
+    opacity: 0;
+  }
+}
+
+.animate-wave {
+  transform-origin: bottom right;
+  animation: avatarWave 0.8s ease-in-out infinite;
+}
+
+.animate-speech-pop {
+  animation: speechBubblePop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-turnaround {
+  animation: spinTurnaround 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.shooting-star-streak {
+  transform-origin: left center;
+  opacity: 0;
+}
+
+/* Storybook card & parchment styling */
+.parchment-card {
+  background-color: #FFFDF7;
+  color: #2D283E;
+  border: 2px solid #EADBBA;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 209, 102, 0.15);
+  background-image: radial-gradient(#ebdcb9 0.75px, transparent 0.75px);
+  background-size: 16px 16px;
+}
+
+.magic-card {
+  background: linear-gradient(145deg, rgba(35, 41, 76, 0.92) 0%, rgba(27, 31, 56, 0.95) 100%);
+  border: 1px solid rgba(255, 209, 102, 0.22);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+}
+
+.gold-foil-button {
+  background: linear-gradient(135deg, #FFD166 0%, #FFB703 50%, #FB8500 100%);
+  color: #1A1423;
+  font-weight: 800;
+  box-shadow: 0 6px 20px rgba(255, 183, 3, 0.4), 0 0 0 2px rgba(255, 209, 102, 0.5);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gold-foil-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 183, 3, 0.6), 0 0 0 3px rgba(255, 255, 255, 0.7);
+}
+
+.gold-foil-button:active {
+  transform: translateY(1px);
+}
+
+.violet-magic-button {
+  background: linear-gradient(135deg, #5B42F3 0%, #7E69FF 100%);
+  color: #FFFDF7;
+  box-shadow: 0 6px 20px rgba(91, 66, 243, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.violet-magic-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(91, 66, 243, 0.6), 0 0 0 2px rgba(255, 209, 102, 0.6);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #14172C;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3B447A;
+  border-radius: 5px;
+  border: 2px solid #14172C;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FFD166;
+}
+
+/* Parchment Story Scrollbar */
+.parchment-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.parchment-scrollbar::-webkit-scrollbar-track {
+  background: #F4EEDF;
+  border-radius: 4px;
+}
+
+.parchment-scrollbar::-webkit-scrollbar-thumb {
+  background: #C49746;
+  border-radius: 4px;
+  border: 1px solid #EADBBA;
+}
+
+.parchment-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9E7428;
+}
+
+/* Magic Dark Glass Scrollbar */
+.magic-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.magic-scrollbar::-webkit-scrollbar-track {
+  background: #0D1020;
+  border-radius: 4px;
+}
+
+.magic-scrollbar::-webkit-scrollbar-thumb {
+  background: #333C6B;
+  border-radius: 4px;
+  border: 1px solid #1A1F3C;
+}
+
+.magic-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #F59E0B;
+}
+
+/* Print Certificate Styling */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #1A1423 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .certificate-page {
+    page-break-after: always;
+    margin: 0 !important;
+    padding: 24px !important;
+    box-shadow: none !important;
+    border: 8px double #C49746 !important;
+    background: #FFFDF7 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ========================================================
+   🌸 Japanese Climates & Time of Day Dynamic Mood System
+   ======================================================== */
+
+/* 1. Morning (Asa - 朝) */
+html[data-time-of-day="morning"] {
+  --navy-midnight: #0F172A;
+  --navy-deep: #1E293B;
+  --navy-card: #28334E;
+  --navy-border: #475569;
+}
+html[data-time-of-day="morning"] .magic-card {
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.90) 0%, rgba(20, 28, 44, 0.94) 100%);
+  border: 1px solid rgba(254, 240, 138, 0.35);
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.35), 0 0 25px rgba(252, 231, 243, 0.12);
+}
+
+/* 2. Evening (Yūgata - 夕方) */
+html[data-time-of-day="evening"] {
+  --navy-midnight: #0F172A;
+  --navy-deep: #1E1B4B;
+  --navy-card: #2E2254;
+  --navy-border: #4C1D95;
+}
+html[data-time-of-day="evening"] .magic-card {
+  background: linear-gradient(145deg, rgba(30, 27, 75, 0.90) 0%, rgba(18, 13, 29, 0.94) 100%);
+  border: 1px solid rgba(249, 115, 22, 0.35);
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.45), 0 0 30px rgba(249, 115, 22, 0.15);
+}
+
+/* 3. Night (Yoru - 夜) */
+html[data-time-of-day="night"] {
+  --navy-midnight: #0B0F19;
+  --navy-deep: #161B33;
+  --navy-card: #20264A;
+  --navy-border: #333C6B;
+}
+html[data-time-of-day="night"] .magic-card {
+  background: linear-gradient(145deg, rgba(27, 31, 56, 0.92) 0%, rgba(11, 15, 25, 0.96) 100%);
+  border: 1px solid rgba(255, 209, 102, 0.28);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5), 0 0 35px rgba(91, 66, 243, 0.2);
+}
+
+/* Climate Header Accent Borders */
+html[data-climate="sakura_spring"] header {
+  border-bottom-color: rgba(244, 114, 182, 0.3);
+}
+html[data-climate="tsuyu_rain"] header {
+  border-bottom-color: rgba(56, 189, 248, 0.3);
+}
+html[data-climate="arashi_storm"] header {
+  border-bottom-color: rgba(167, 139, 250, 0.3);
+}
+html[data-climate="kaze_mountain_wind"] header {
+  border-bottom-color: rgba(52, 211, 153, 0.3);
+}
+html[data-climate="fuyu_snow"] header {
+  border-bottom-color: rgba(147, 197, 253, 0.3);
+}
+
